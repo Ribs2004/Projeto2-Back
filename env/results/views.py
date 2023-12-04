@@ -18,34 +18,9 @@ class anuncios_view(viewsets.ModelViewSet):
     queryset = Anuncio.objects.all()
     serializer_class = AnunciosSerializer
 
-@api_view(['GET', 'POST'])
-def search_results(request):
-    results = SearchResult.objects.all().order_by('-id')[:5]
-    serialized_result = SearchResultSerializer(results, many=True)
-    
-    if request.method == 'POST':
-        print('Received POST')
-        data = request.data
-        name = data.get('name')
-        print(name)
-        gender = data.get('gender')
-        print(gender)
-        probability = data.get('probability')
-        print(probability)
-
-        result = SearchResult(name=name, gender=gender, probability=probability)
-        result.save()
-        return Response(status=201)
-
-    elif request.method == 'GET':
-        print(serialized_result.data)
-        return Response(serialized_result.data)
-        
-    return Response({"message": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-@api_view(['GET', 'POST'])
+"""@api_view(['GET', 'POST'])
 def anuncios(request):
-    results = Anuncio.objects.all()  #.order_by('-id')[:3]
+    results = Anuncio.objects.all() #.order_by('-id')[:5]
     serialized_result = AnunciosSerializer(results, many=True)
     
     if request.method == 'POST':
@@ -59,7 +34,7 @@ def anuncios(request):
         return Response(status=201)
 
     elif request.method == 'GET':
+        print(serialized_result.data)
         return Response(serialized_result.data)
         
-    return Response({"message": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+    return Response({"message": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)"""
