@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import SearchResult
-from .serializers import SearchResultSerializer
+from .models import SearchResult, Anuncio
+from .serializers import SearchResultSerializer, AnunciosSerializer
 # from rest_framework.views import APIView
 # from django.core.serializers import json
 
@@ -14,19 +14,14 @@ from .serializers import SearchResultSerializer
 #         json_serialized = json_serializer.serialize(results)
 #         return Response(json_serialized)
 
+class anuncios_view(viewsets.ModelViewSet):
+    queryset = Anuncio.objects.all()
+    serializer_class = AnunciosSerializer
+
 @api_view(['GET', 'POST'])
 def search_results(request):
     results = SearchResult.objects.all().order_by('-id')[:5]
     serialized_result = SearchResultSerializer(results, many=True)
-
-    """if request.method == 'POST':
-        print('recebi o POST')
-        name = request.POST.get('name')
-        print(name)
-        gender = request.POST.get('gender')
-        print(gender)
-        probability = request.POST.get('probability')
-        print(probability)"""
     
     if request.method == 'POST':
         print('Received POST')
@@ -48,14 +43,23 @@ def search_results(request):
         
     return Response({"message": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-# class SearchResultViewSet(viewsets.ModelViewSet):
-#     queryset = SearchResult.objects.all().order_by('-timestamp')
-#     serializer_class = SearchResultSerializer
+@api_view(['GET', 'POST'])
+def anuncios(request):
+    results = Anuncio.objects.all()  #.order_by('-id')[:3]
+    serialized_result = AnunciosSerializer(results, many=True)
+    
+    if request.method == 'POST':
+        data = request.data
+        headline = data.get('headline')
+        img = data.get('img')
+        link = data.get('link')
 
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.get_queryset()[:5]
-#         serializer = self.get_serializer(queryset, many=True)
-#         return Response(serializer.data)
+        result = Anuncio(headline=headline, img=img, link=link)
+        result.save()
+        return Response(status=201)
 
-#     def create(self, request, *args, **kwargs):
-#         return super().create(request, *args, **kwargs)
+    elif request.method == 'GET':
+        return Response(serialized_result.data)
+        
+    return Response({"message": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+

@@ -5,3 +5,9 @@ class SearchResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchResult
         fields = '__all__'
+
+
+class AnunciosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SearchResult
+        fields = '__all__'
